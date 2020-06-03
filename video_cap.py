@@ -4,6 +4,8 @@ import time
 import matplotlib.pyplot as plt
 import os
 
+monitor=False
+
 def downscale(frameg,dec=10):
     width = int(frameg.shape[1] / float(dec))
     height = int(frameg.shape[0] / float(dec))
@@ -23,13 +25,13 @@ def start_cap(hist_len=300,
     os.system("mkdir -p %s"%(dname))
     f=open(logfile,"w")
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), image_quality]
-    video_capture = cv2.VideoCapture(1)
+    video_capture = cv2.VideoCapture(0)
     # Check success
     if not video_capture.isOpened():
         raise Exception("Could not open video device")
     # Set properties. Each returns === True on success (i.e. correct resolution)
-    video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    video_capture.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 1280)
+    video_capture.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 720)
 
     fi=0
     sd_hist=n.zeros(hist_len)
@@ -50,26 +52,29 @@ def start_cap(hist_len=300,
             #            plt.imshow(frameg-prev_frame)
             #           plt.colorbar()
             #          plt.show()
-            if fi == 1:
+            if fi == 1 and monitor:
                 cv2.imshow("frame",frame)
                 cv2.imshow("det",frameg-prev_frame)                
                 key=cv2.waitKey(10)
   
                        
             sd_hist[fi%hist_len]=diff
-            noise_floor = n.nanmedian(sd_hist)
-            noise_std = n.nanmean(n.abs(sd_hist-noise_floor))
+            noise_floor = n.median(sd_hist)
+            noise_std = n.mean(n.abs(sd_hist-noise_floor))
             
             if n.abs(diff - noise_floor) > thresh*noise_std and ( (t0-prev_cap_t) > min_dt ) and fi > hist_len:
                 t_event=time.time()
                 prev_cap_t=t_event
                 val=n.abs(diff - noise_floor)/noise_std
                 print("detection %1.2f val %1.2f"%(t_event,val))
-                cv2.imshow("frame",frame)
-                cv2.imshow("det",frameg-prev_frame)                
-                key=cv2.waitKey(100)
+                if monitor:
+                    cv2.imshow("frame",frame)
+                    cv2.imshow("det",frameg-prev_frame)                
+                    key=cv2.waitKey(100)
                 f.write("%f detection %1.2f noise_floor %1.2f noise_std %1.2f\n"%(time.time(),n.abs(diff-noise_floor)/noise_std,noise_floor,noise_std))
-                cv2.imwrite("vs/test-%1.2f.jpg"%(t_event),frame,encode_param)
+                ofname="%s/test-%1.2f.jpg"%(dname,t_event)
+                cv2.imwrite(ofname,frame,encode_param)
+                os.system("ln -sf %s vs/latest.jpg"%(ofname))
 
                 
   #              plt.plot(sd_hist)
@@ -80,7 +85,6 @@ def start_cap(hist_len=300,
         if fi%10 == 0 and fi > 0:
             print("%f fps %1.2f noise_floor %1.2f noise_std %1.6f\n"%(time.time(),1.0/(t1-t0),noise_floor,noise_std))
         
-
     video_capture.release()
 
 start_cap()
