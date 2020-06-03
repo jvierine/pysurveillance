@@ -74,7 +74,7 @@ def start_cap(hist_len=300,
                 f.write("%f detection %1.2f noise_floor %1.2f noise_std %1.2f\n"%(time.time(),n.abs(diff-noise_floor)/noise_std,noise_floor,noise_std))
                 ofname="%s/test-%1.2f.jpg"%(dname,t_event)
                 cv2.imwrite(ofname,frame,encode_param)
-                os.system("ln -sf %s vs/latest.jpg"%(ofname))
+                os.system("cp %s vs/latest.jpg"%(ofname))
 
                 
   #              plt.plot(sd_hist)
