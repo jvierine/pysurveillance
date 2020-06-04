@@ -2,35 +2,58 @@ import cv2
 import numpy as n
 import glob
 import os
+from datetime import datetime
+import re
+import sys
+import time
 
-max_n=600
-fl=glob.glob("vs/test*.jpg")
-fl.sort()
-# only max_n latest images
-if len(fl) > max_n:
-    fl=fl[(len(fl)-max_n):len(fl)]
+import pysurveillance_conf as conf
 
-# what is the image size
-for filename in fl[0:1]:
-    img = cv2.imread(filename)
-    height, width, layers = img.shape
-    size = (width,height)
 
-# this doesn't work
-#out = cv2.VideoWriter('vs/latest_tmp.mp4',cv2.cv.CV_FOURCC(*"X264"),5.0, size)
-# this magic code/contained combo seems to work. 
-out = cv2.VideoWriter('vs/latest_tmp.avi',cv2.cv.CV_FOURCC(*"MJPG"),5.0, size)
+def find_days():
+    dl=glob.glob("%s/????-??-??"%(conf.data_dir))
+    dl.sort()
+    return(dl)
 
-# open files one at a time to avoid excessive ram use
-for filename in fl:
-    print(filename)
-    img = cv2.imread(filename)
-    out.write(img)
-out.release()
+def create_html():
+    fl=glob.glob("%s/????-??-??/????-??-??.mp4"%(conf.data_dir))
+    html_str=""
+    for f in fl:
+        date_str = re.search(".*(....-..-..).mp4",f).group(1)
+        html_str += "<a href=\"%s\"> [%s] </a>\n"%(f,date_str)
+    fo=open("%s/index.html"%(conf.data_dir),"w")
+    fi=open("index.html_template","r")
+    for l in fi.readlines():
+        fo.write(l)
+    fo.write(html_str)
+    fo.write("</body></html>\n")
+    fo.close()
+    return(html_str)
 
-# copy tmp file to one on web page
-os.system("cp vs/latest_tmp.avi vs/latest.avi")
-# convert to mp4 for html embedding
-os.system("avconv -y -i vs/latest.avi -c:v libx264 vs/latest_tmp.mp4")
-# copy tmp file to file on web page
-os.system("cp vs/latest_tmp.mp4 vs/latest.mp4")
+
+def create_day_file(dir_name,ofname="out.mp4"):
+    cmd="ffmpeg -pattern_type glob -i \"%s/*.jpg\" -c:v libx264 %s"%(dir_name,ofname)
+    print(cmd)
+    os.system("ffmpeg -y -pattern_type glob -i \"%s/*.jpg\" -c:v libx264 %s"%(dir_name,ofname))
+
+def create_animations():
+    # figure out how the files are organized.
+    # we're going to create a video for each day
+    dirs=find_days()
+    n_dirs=len(dirs)
+    for di,d in enumerate(dirs):
+        print(d)
+        day=re.search(".*/(....-..-..)",d).group(1)
+        video_name="%s/%s.mp4"%(d,day)
+        if os.path.exists(video_name) and di != (n_dirs-1):
+            # if old directory, and file already exists
+            print("video %s exists already"%(video_name))
+        else:
+            # current day. always make video
+            create_day_file(d,ofname=video_name)
+            os.system("cp %s %s/latest.mp4"%(video_name,conf.data_dir))
+            
+while True:
+    create_html()
+    create_animations()
+    time.sleep(5)
