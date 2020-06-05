@@ -6,10 +6,10 @@ import cv2
 import os
 import glob
 
-class yolo_detector:
+class caffe_detector:
     def __init__(self,
-                 caffe_proto_txt="MobileNetSSD_deploy.prototxt.txt",
-                 caffe_model_file="MobileNetSSD_deploy.caffemodel",
+                 caffe_proto_txt="caffe/MobileNetSSD_deploy.prototxt.txt",
+                 caffe_model_file="caffe/MobileNetSSD_deploy.caffemodel",
                  ):
         n.random.seed(42)
         self.classes = ["background", "aeroplane", "bicycle", "bird", "boat",
@@ -18,7 +18,6 @@ class yolo_detector:
 	                "sofa", "train", "tvmonitor"]
 
         self.colors = n.random.uniform(0, 255, size=(len(self.classes), 3))
-#        self.colors = n.random.randint(0, 255, size=(len(self.classes), 3), dtype="uint8")        
         self.net = cv2.dnn.readNetFromCaffe(caffe_proto_txt, caffe_model_file)
         
 
@@ -37,43 +36,44 @@ class yolo_detector:
         # detector and obtain the detections
         self.net.setInput(blob)
         detections = self.net.forward()
-        print(detections)
+
         if detections is not None:
             # loop over the detections
             for i in n.arange(0, detections.shape[2]):
                 confidence = detections[0, 0, i, 2]
-                print(confidence)
+
                 if confidence < thresh_confidence:
                     continue
                 # otherwise, extract the index of the class label from
                 # the `detections`, then compute the (x, y)-coordinates
                 # of the bounding box for the object
                 idx = int(detections[0, 0, i, 1])
-                print(idx)
+
                 dims = n.array([W, H, W, H])
                 box = detections[0, 0, i, 3:7] * dims
                 (startX, startY, endX, endY) = box.astype("int")
-                
+
+
+                print("detected %s with %1.2f probability"%(self.classes[idx],confidence*100.0))
                 # draw the prediction on the frame
                 label = "{}: {:.2f}%".format(self.classes[idx],
                                              confidence * 100)
-                print(self.colors[idx])
-                print(idx)
                 cv2.rectangle(image, (startX, startY), (endX, endY), self.colors[idx], 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 cv2.putText(image, label, (startX, y),
 			    cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                             self.colors[idx], 2)
-        # show the output frame
-        cv2.imshow("Frame", image)
-        key = cv2.waitKey(1) & 0xFF
+        if False:
+            # show the output frame
+            cv2.imshow("Frame", image)
+            key = cv2.waitKey(1) & 0xFF
 
 
                 
 
 
 
-yd=yolo_detector()
+yd=caffe_detector()
 
 fl=glob.glob("vs/2*/*.jpg")
 fl.sort()
