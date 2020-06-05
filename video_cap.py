@@ -86,6 +86,12 @@ def start_cap(hist_len=300,
                 
                 os.system("mkdir -p %s/%s"%(dname,day_dirname))
                 ofname="%s/%s/det-%1.2f.jpg"%(dname,day_dirname,t_event)
+
+
+#                if conf.rotate_on_detection:
+ #                   image=n.transpose(image,axes=[1,0,2])
+  #                  image=image[::-1,:,:].astype(n.uint8).copy()
+
                 
                 if conf.include_timestamp:
                     # specify the font and draw the key using puttext

@@ -32,9 +32,14 @@ def create_html():
 
 
 def create_day_file(dir_name,ofname="out.mp4"):
-    cmd="ffmpeg -pattern_type glob -i \"%s/*.jpg\" -c:v libx264 %s"%(dir_name,ofname)
+    if  conf.show_labels:
+        cmd="ffmpeg -y -pattern_type glob -i \"%s/det*.jpg\" -c:v libx264 %s"%(dir_name,ofname)
+    else:
+        cmd="ffmpeg -y -pattern_type glob -i \"%s/label*.jpg\" -c:v libx264 %s"%(dir_name,ofname)
+        
+        
     print(cmd)
-    os.system("ffmpeg -y -pattern_type glob -i \"%s/*.jpg\" -c:v libx264 %s"%(dir_name,ofname))
+    os.system(cmd)
 
 def create_animations():
     # figure out how the files are organized.

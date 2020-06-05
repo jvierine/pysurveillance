@@ -12,3 +12,9 @@ image_quality=30
 
 # maximum number of frames per second to capture
 max_fps=5.0
+
+# rotate images 90 degrees before image feature detection
+rotate_on_detection=True
+
+# show labels on the videos (you must run object detection for this to work)
+show_labels=False
