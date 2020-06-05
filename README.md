@@ -4,6 +4,8 @@ Somebody stole my bike. I didn't find the security camera or software I wanted, 
 
 Features:
 - save jpg images when motion detected
-- save h.264 codec mp4 files of the latest N detections
+- save h.264 codec mp4 files of movement detected each day
+- creates a web with latest motion detection and the overview videos. 
 
-This allows me to put the files on a web page and access them over the internet. 
+Future ideas:
+- Use maching learning algorithms in opencv to detect features.
