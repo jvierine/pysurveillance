@@ -6,6 +6,7 @@ Features:
 - save jpg images when motion detected
 - save h.264 codec mp4 files of movement detected each day
 - creates a web with latest motion detection and the overview videos. 
+- Deep neural network based object detection to identify features in image
 
-Future ideas:
-- Use maching learning algorithms in opencv to detect features.
+Future development ideas:
+- Use detected features at certain times of day to raise an alarm e.g., with SMS or email.
