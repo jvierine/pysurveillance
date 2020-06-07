@@ -1,4 +1,5 @@
 # pysurveillance
+![Example](https://github.com/jvierine/pysurveillance/blob/master/example/label-1591336913.66.jpg)
 
 You can make a wifi enabled security camera with machine learning based object recognition with this piece of software.
 
@@ -12,3 +13,6 @@ Features:
 
 Future development ideas:
 - Use detected features at certain times of day to raise an alarm e.g., with SMS or email.
+
+I found this tutorial very helpful when making this software:
+https://www.pyimagesearch.com/2017/10/16/raspberry-pi-deep-learning-object-detection-with-opencv/
