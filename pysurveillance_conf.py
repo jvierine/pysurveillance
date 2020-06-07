@@ -17,4 +17,12 @@ max_fps=5.0
 rotate_on_detection=True
 
 # show labels on the videos (you must run object detection for this to work)
-show_labels=False
+show_labels=True
+
+# send alerts when person detected during a certain time of day
+send_alerts=True
+# if a person is detected between 22 and 6 UTC, send a phone alert.
+alert_armed_h0 = 22.0 # alarm on
+alert_armed_h1 = 6.0  # alarm off
+minimum_spacing_between_calls=1.0  # wait at least one hour until we make another call
+
