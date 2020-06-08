@@ -34,6 +34,7 @@ class caffe_detector:
 
     def detect(self,
                image,
+               t_event,
                output_image_fname="label.jpg",
                label_fname="label.txt",
                thresh_confidence=0.3,
@@ -74,7 +75,7 @@ class caffe_detector:
                 
                 if self.classes[idx] in self.reported_classes:
                     if conf.send_alerts:
-                        alert_phone.send_alert()
+                        alert_phone.send_alert(t_event)
                     # otherwise, extract the index of the class label from
                     # the `detections`, then compute the (x, y)-coordinates
                     # of the bounding box for the object
@@ -109,7 +110,7 @@ fl.sort()
 fl=fl[::-1]
 for f in fl:
     if os.path.exists("%s.label"%(f)):
-        print("already exists")
+        pass#print("already exists")
     else:
         print("labeling %s"%(f))
         image = cv2.imread(f)
@@ -119,13 +120,16 @@ for f in fl:
 
         prefix=re.search("(.*)/det-.*.jpg",f).group(1)
         postfix=re.search(".*/det(-.*).jpg",f).group(1)
+        
         t_event=float(re.search(".*/det-(.*).jpg",f).group(1))
         
         image_fname="%s/label%s.jpg"%(prefix,postfix)
         label_fname="%s.label"%(f)
+        
         print("writing image %s labels to %s time %s"%(image_fname,label_fname,dpu.unix2datestr(t_event)))
             
         cd.detect(image=image,
+                  t_event=t_event,
                   label_fname=label_fname,
                   output_image_fname=image_fname)
         # done for now

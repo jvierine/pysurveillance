@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="refresh" content="120">
+    <meta http-equiv="refresh" content="600">
       <head/>
       <body>
       <h1>Most recent</h1>
@@ -11,7 +11,7 @@
 
       <h1>Today</h1>      
 <p>
-<video type="video/mp4" src="vs/latest.mp4" controls autoplay width="100%"/>
+<video type="video/mp4" src="vs/latest.mp4" controls autoplay width="640"/>
 </p>
 
       <h1>History</h1>

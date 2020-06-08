@@ -23,8 +23,13 @@ def is_armed(h_now):
     return(False)
 
 
-def send_alert():
-    h_now=n.mod(time.time()/3600.0,24.0)
+def send_alert(t_event):
+    t_now=time.time()
+    if n.abs(t_now - t_event)>0.1:
+        print("Detected event was over five minutes ago. Not sending an alert")
+        return
+    
+    h_now=n.mod(t_event/3600.0,24.0)
 
     if not is_armed(h_now):
         return    

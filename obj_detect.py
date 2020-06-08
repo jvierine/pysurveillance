@@ -5,6 +5,7 @@ import time
 import cv2
 import os
 import glob
+import pysurveillance_conf as conf
 
 class yolo_detector:
     def __init__(self,yolo_dir="./yolo-coco"):
@@ -95,10 +96,10 @@ class yolo_detector:
                 text = "{}: {:.4f}".format(self.labels[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                             0.5, color, 2)
-                
+        
         # show the output image
-        cv2.imshow("Image", image)
-        cv2.waitKey(1)
+        #cv2.imshow("Image", image)
+        #cv2.waitKey(1)
 
 
 yd=yolo_detector()
@@ -108,6 +109,6 @@ fl.sort()
 for f in fl:
     image = cv2.imread(f)
     image=n.transpose(image,axes=[1,0,2])
-    image=image[::-1,:,:].astype(n.uint8).copy()
-#    print(image.dtype)
+    if conf.rotate:
+        image=image[::-1,:,:].astype(n.uint8).copy()
     yd.detect(image)
