@@ -91,9 +91,7 @@ class caffe_detector:
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                                 self.colors[idx], 2)
                     # only make label image if there is a detected label
-                    cv2.imwrite(output_image_fname,image,encode_param)
-
-                    
+                    cv2.imwrite(output_image_fname,image,encode_param)                    
 
         fo=open(label_fname,"w")
         for p in parsed_detections:
@@ -108,6 +106,7 @@ cd=caffe_detector()
 fl=glob.glob("vs/2*/det-*.jpg")
 fl.sort()
 fl=fl[::-1]
+
 for f in fl:
     if os.path.exists("%s.label"%(f)):
         pass#print("already exists")
